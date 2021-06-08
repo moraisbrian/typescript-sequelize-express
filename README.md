@@ -1,0 +1,1 @@
+## Exemplo simples de aplicação com TypeScript, Sequelize e Express
