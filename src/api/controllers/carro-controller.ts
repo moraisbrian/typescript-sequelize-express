@@ -1,7 +1,15 @@
 import { Request, Response } from 'express';
-import { CarroService } from '../services/carro-service';
+import { injectable } from 'tsyringe';
+import { CarroService } from '../../services/carro-service';
 
+@injectable()
 export class CarroController {
+  private carroService: CarroService;
+
+  constructor(carroService: CarroService) {
+    this.carroService = carroService;
+  }
+
   public async adicionar(req: Request, res: Response): Promise<void> {
     try {
       const { modelo, marcaId } = req.body;
@@ -9,8 +17,7 @@ export class CarroController {
       if (modelo === null || modelo === undefined || marcaId === null || marcaId === undefined)
         throw 'Dados inválidos'
 
-      const carroService: CarroService = new CarroService();
-      const carro = await carroService.adicionar(modelo, marcaId);
+      const carro = await this.carroService.adicionar(modelo, marcaId);
 
       res.status(201).json(carro);
     } catch (error) {
@@ -20,8 +27,7 @@ export class CarroController {
 
   public async consultar(req: Request, res: Response): Promise<void> {
     try {
-      const carroService: CarroService = new CarroService();
-      const carros = await carroService.consultar();
+      const carros = await this.carroService.consultar();
       const httpStatus = (carros === null || carros === []) ? 204 : 200;
       res.status(httpStatus).json(carros);
     } catch (error) {
@@ -39,8 +45,7 @@ export class CarroController {
       if (modelo === null || modelo === undefined || marcaId === null || marcaId === undefined)
         throw 'Dados inválidos'
 
-      const carroService: CarroService = new CarroService();
-      const result = await carroService.atualizar(parseInt(id), modelo, marcaId);
+      const result = await this.carroService.atualizar(parseInt(id), modelo, marcaId);
 
       const httpStatus = result === null ? 204 : 200;
 
@@ -57,8 +62,7 @@ export class CarroController {
       if (id === undefined || id === null)
         throw 'Id não definido';
 
-      const carroService: CarroService = new CarroService();
-      const result = await carroService.deletar(parseInt(id));
+      const result = await this.carroService.deletar(parseInt(id));
 
       const httpStatus = result === 0 ? 204 : 200;
 
@@ -75,8 +79,7 @@ export class CarroController {
       if (id === undefined || id === null)
         throw 'Id não definido';
 
-      const carroService: CarroService = new CarroService();
-      const carro = await carroService.consultarPorId(parseInt(id));
+      const carro = await this.carroService.consultarPorId(parseInt(id));
 
       const httpStatus = carro === null ? 204 : 200;
 
